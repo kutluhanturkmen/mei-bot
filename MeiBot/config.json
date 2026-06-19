@@ -1,0 +1,141 @@
+{
+  "bot": {
+    "name": "Mei",
+    "version": "1.0.0",
+    "prefix": "/",
+    "supportServer": "https://discord.gg/your-invite-here",
+    "inviteLink": "https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&scope=bot%20applications.commands"
+  },
+
+  "colors": {
+    "primary": "#FFB7C5",
+    "success": "#B5EAD7",
+    "error": "#FF6B6B",
+    "warning": "#FFEAA7",
+    "info": "#AED9E0",
+    "premium": "#FFD700",
+    "dark": "#2F3136"
+  },
+
+  "emojis": {
+    "cat": {
+      "happy": "<:mei_happy:0000000000000001>",
+      "sad": "<:mei_sad:0000000000000002>",
+      "love": "<:mei_love:0000000000000003>",
+      "angry": "<:mei_angry:0000000000000004>",
+      "sleepy": "<:mei_sleepy:0000000000000005>",
+      "surprised": "<:mei_surprised:0000000000000006>",
+      "blush": "<:mei_blush:0000000000000007>",
+      "wink": "<:mei_wink:0000000000000008>"
+    },
+    "ui": {
+      "premium": "💎",
+      "coin": "🪙",
+      "cafe": "☕",
+      "heart": "🩷",
+      "star": "⭐",
+      "sparkle": "✨",
+      "arrow_right": "›",
+      "dot": "•",
+      "check": "✅",
+      "cross": "❌",
+      "warning": "⚠️",
+      "gift": "🎁",
+      "trophy": "🏆",
+      "sword": "⚔️",
+      "shield": "🛡️",
+      "paw": "🐾",
+      "fish": "🐟",
+      "flower": "🌸"
+    }
+  },
+
+  "economy": {
+    "currency": "Lotus Coins",
+    "currencySymbol": "🪙",
+    "dailyAmount": 500,
+    "dailyCooldown": 86400000,
+    "workCooldown": 3600000,
+    "workMinAmount": 100,
+    "workMaxAmount": 400,
+    "triviaReward": 250,
+    "triviaCooldown": 300000,
+    "startingBalance": 1000,
+    "passiveIncomeInterval": 3600000
+  },
+
+  "earlySupporter": {
+    "cooldownReduction": 0.5,
+    "economyBoostMultiplier": 2,
+    "freeGiveawayLimit": 3,
+    "supportServerId": "YOUR_SUPPORT_SERVER_ID",
+    "userRoleId": "YOUR_EARLY_SUPPORTER_USER_ROLE_ID",
+    "serverRoleId": "YOUR_EARLY_SUPPORTER_SERVER_ROLE_ID"
+  },
+
+  "catfight": {
+    "minPlayers": 2,
+    "maxPlayers": 24,
+    "lobbyTimeout": 120000,
+    "roundInterval": 30000,
+    "eliminationMessages": [
+      "{player} was distracted by a laser pointer and fell off the map. 🔴",
+      "{player} tried to fit into a tiny cardboard box and got stuck. 📦",
+      "{player} saw a cucumber and ran straight off a cliff. 🥒",
+      "{player} knocked a glass off the table and stared at it as it fell. 🥛",
+      "{player} chased their own tail for 3 hours and passed out. 😵",
+      "{player} got yeeted by a Roomba. 🤖",
+      "{player} rejected all forms of medicine and simply refused to wake up. 😴",
+      "{player} was defeated by the sound of a bag of treats — from 5 miles away. 🎒",
+      "{player} demanded pets, received none, and lost the will to continue. 🐾",
+      "{player} walked across the keyboard and somehow deleted themselves. ⌨️",
+      "{player} tripped over absolutely nothing. Witnesses confirmed there was nothing there. 🌫️",
+      "{player} was lured into a carrier with one treat and is currently at the vet. 💉",
+      "{player} hissed at their own reflection and ran into a wall. 🪞",
+      "{player} had a 3am zoomie session, ran out of bounds, and could not be located. 🌙",
+      "{player} was knocked out by a single gentle boop on the nose. 👃"
+    ],
+    "winMessages": [
+      "🏆 **{winner}** is the last cat standing! A true apex predator. 🐱",
+      "✨ **{winner}** wins the Catfight! The others never stood a chance. 🌸",
+      "🎉 **{winner}** has proven themselves the ultimate feline warrior! 🐾"
+    ]
+  },
+
+  "cafe": {
+    "maxCats": 10,
+    "cleanlinessDecayRate": 5,
+    "cleanlinessDecayInterval": 3600000,
+    "maxCleanliness": 100,
+    "minCleanliness": 0,
+    "cleanCost": 50,
+    "tiers": [
+      { "level": 1, "name": "Tiny Paw Corner",  "passiveIncome": 25,  "maxCats": 2  },
+      { "level": 2, "name": "Cozy Cat Nook",    "passiveIncome": 60,  "maxCats": 4  },
+      { "level": 3, "name": "Purring Parlour",  "passiveIncome": 120, "maxCats": 6  },
+      { "level": 4, "name": "Blossom Cat Café", "passiveIncome": 200, "maxCats": 8  },
+      { "level": 5, "name": "Lotus Dreamland",  "passiveIncome": 350, "maxCats": 10 }
+    ]
+  },
+
+  "cooldowns": {
+    "daily": 86400000,
+    "work": 3600000,
+    "trivia": 300000,
+    "ship": 10000,
+    "guessnumber": 30000,
+    "profile": 5000
+  },
+
+  "limits": {
+    "shipMaxUsers": 2,
+    "leaderboardSize": 10,
+    "giveawayMaxDuration": 604800000,
+    "giveawayMinDuration": 60000
+  },
+
+  "footer": {
+    "text": "Mei Bot 🌸 • Made with love",
+    "iconURL": ""
+  }
+}

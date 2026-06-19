@@ -1,0 +1,32 @@
+{
+  "name": "mei-discord-bot",
+  "version": "1.0.0",
+  "description": "🌸 Mei — The Ultimate Aesthetic Community & Game Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "mei",
+    "aesthetic",
+    "community"
+  ],
+  "author": "WenOX",
+  "license": "MIT",
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.0",
+    "chalk": "^4.1.2",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
