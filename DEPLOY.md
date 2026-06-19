@@ -574,8 +574,8 @@ npm install
 npm run build
 # "Route (app)" tablosu çıkmalı, hata olmadan bitmeli
 
-# PM2 ile başlat
-pm2 start npm --name mei-client -- start
+# PM2 ile başlat — server.js wrapper kullan (Windows uyumlu)
+pm2 start server.js --name mei-client
 
 # Durum kontrolü
 pm2 list
