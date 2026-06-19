@@ -1,0 +1,16 @@
+[build]
+  builder = "nixpacks"
+
+[deploy]
+  startCommand = "node src/server.js"
+  healthcheckPath = "/health"
+  healthcheckTimeout = 300
+  restartPolicyType = "on_failure"
+  restartPolicyMaxRetries = 3
+
+[[services]]
+  internalPort = 4000
+
+[environments.production.variables]
+  NODE_ENV = "production"
+  PORT = "4000"
