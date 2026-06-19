@@ -395,91 +395,134 @@ pm2 restart mei-client
 
 ## 11. VDS Kurulum — Windows Server 2022
 
+> **Özet akış:** Araçlar → Proje → Bot → API → Client → PM2 Startup → Firewall → Caddy (reverse proxy + SSL)
+
+---
+
 ### 11a. Gerekli Araçları Kur
 
-PowerShell'i **Yönetici** olarak aç:
+**PowerShell'i Yönetici olarak aç:**
+Başlat menüsünde "PowerShell" ara → sağ tık → **Yönetici olarak çalıştır**
 
 ```powershell
-# Winget yoksa önce Microsoft Store'dan App Installer'ı yükle
 # Node.js 20 LTS
 winget install OpenJS.NodeJS.LTS
 
 # Git
 winget install Git.Git
 
-# PowerShell'i yenile (PATH güncellenmesi için)
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+# PATH'i bu oturumda güncelle (yeniden başlatmaya gerek kalmadan)
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" +
+            [System.Environment]::GetEnvironmentVariable("Path","User")
 
-# Sürümleri doğrula
-node -v
-npm -v
+# Sürümleri doğrula — hepsi versiyon numarası dönmeli
+node -v    # v20.x.x
+npm -v     # 10.x.x
 git --version
+```
 
-# PM2
+> Winget yoksa Node'u https://nodejs.org/en/download adresinden `.msi` ile kur.
+
+```powershell
+# PM2 — process manager (servisleri arka planda çalıştırır)
 npm install -g pm2
+
+# Windows başlangıcında PM2'nin otomatik başlaması için
 npm install -g pm2-windows-startup
 ```
 
-### 11b. canvas için Build Araçları
+---
 
-`@napi-rs/canvas` prebuilt binary kullandığı için genellikle ek kurulum gerekmez.
-Yine de hata alınırsa:
+### 11b. canvas için Build Araçları (Hata Alırsan)
+
+`@napi-rs/canvas` prebuilt binary gelir, çoğunlukla ek araç gerekmez.
+`npm install` sırasında build hatası alırsan:
 
 ```powershell
 npm install -g windows-build-tools
 ```
 
-### 11c. Projeyi Klonla
+---
+
+### 11c. Projeyi İndir
 
 ```powershell
+# C:\ altına indir
 cd C:\
 git clone https://github.com/KULLANICI/mei-bot.git mei
-cd C:\mei
 ```
 
-### 11d. MeiBot Kurulumu
+Git yoksa ya da GitHub'a bağlantı sorunundaysan: projeyi bilgisayarından `C:\mei\` klasörüne ZIP olarak kopyalayabilirsin.
+
+---
+
+### 11d. MeiBot — .env ve config Ayarları
 
 ```powershell
 cd C:\mei\MeiBot
-npm install
+```
 
-# .env dosyasını oluştur (Not Defteri ile de açılabilir)
-New-Item .env
+**`.env` dosyası oluştur:**
+```powershell
+New-Item -Path . -Name ".env" -ItemType "file"
 notepad .env
 ```
 
-`.env` içeriği:
+Not Defteri açılır. Aşağıdakini yapıştır, kendi değerlerinle doldur, kaydet:
 ```
 DISCORD_TOKEN=your_bot_token
-MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/meibot
+MONGO_URI=mongodb+srv://kullanici:sifre@cluster.mongodb.net/meibot
 ```
+
+**`config.json` düzenle** (Early Supporter ID'lerini gir):
+```powershell
+notepad config.json
+```
+`earlySupporter` bloğundaki `supportServerId`, `userRoleId`, `serverRoleId` değerlerini gerçek Discord ID'leriyle değiştir, kaydet.
+
+---
+
+### 11e. MeiBot — Bağımlılıkları Kur ve Başlat
 
 ```powershell
-# config.json düzenle
-notepad config.json
+cd C:\mei\MeiBot
 
-# Slash komutları (tek seferlik)
+# Bağımlılıkları kur
+npm install
+
+# Discord'a slash komutlarını kaydet (SADECE İLK KURULUMDA bir kez çalıştır)
 node src/gateway/commands.js
-
-# PM2 ile başlat
-pm2 start ecosystem.config.cjs --env production
-pm2 save
+# "Successfully registered X application commands." mesajı görünmeli
 ```
 
-### 11e. API Kurulumu
+> Slash komutları kaydedilmezse Discord'da `/daily`, `/profile` gibi komutlar çalışmaz.
+
+```powershell
+# PM2 ile botu başlat
+pm2 start ecosystem.config.cjs --env production --name mei-bot
+
+# Durumunu kontrol et
+pm2 list
+# "mei-bot" satırında status "online" görünmeli
+```
+
+Bot başarıyla başladıysa Discord'da botun çevrimiçi göründüğünü görürsün.
+
+---
+
+### 11f. API — .env Ayarları ve Başlatma
 
 ```powershell
 cd C:\mei\MeiWeb\api
-npm install
 
-New-Item .env
+New-Item -Path . -Name ".env" -ItemType "file"
 notepad .env
 ```
 
-`.env` içeriği:
+Aşağıdakini yapıştır, değerleri doldur, kaydet:
 ```
-MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/meibot
-JWT_SECRET=en_az_32_karakter_rastgele_string
+MONGO_URI=mongodb+srv://kullanici:sifre@cluster.mongodb.net/meibot
+JWT_SECRET=en_az_32_karakter_rastgele_string_buraya
 DISCORD_CLIENT_ID=discord_uygulama_client_id
 DISCORD_CLIENT_SECRET=discord_uygulama_client_secret
 DISCORD_REDIRECT_URI=https://api.siteadin.com/api/auth/discord/callback
@@ -489,56 +532,114 @@ NODE_ENV=production
 PORT=4000
 ```
 
+> `DISCORD_REDIRECT_URI` — Discord Developer Portal > OAuth2 > Redirects listesinde de aynı URL tanımlı olmalı.
+
 ```powershell
+# Bağımlılıkları kur
+npm install
+
+# PM2 ile başlat
 pm2 start src/server.js --name mei-api
-pm2 save
+
+# Durum kontrolü
+pm2 list
+# "mei-api" satırında status "online" görünmeli
+
+# API'yi test et (tarayıcıda da açabilirsin)
+# http://localhost:4000/health → {"status":"ok"} dönmeli
 ```
 
-### 11f. Client (Next.js) Kurulumu
+---
+
+### 11g. Client (Next.js) — .env Ayarları ve Başlatma
 
 ```powershell
 cd C:\mei\MeiWeb\client
 
-New-Item .env.local
+New-Item -Path . -Name ".env.local" -ItemType "file"
 notepad .env.local
 ```
 
-`.env.local` içeriği:
+Yapıştır, kaydet:
 ```
 NEXT_PUBLIC_API_URL=https://api.siteadin.com
 NEXT_PUBLIC_DISCORD_CLIENT_ID=discord_uygulama_client_id
 ```
 
 ```powershell
+# Bağımlılıkları kur
 npm install
+
+# Production build al (birkaç dakika sürer)
 npm run build
+# "Route (app)" tablosu çıkmalı, hata olmadan bitmeli
 
+# PM2 ile başlat
 pm2 start npm --name mei-client -- start
-pm2 save
-```
 
-### 11g. Windows Startup (Sunucu yeniden başlayınca otomatik başlat)
-
-```powershell
-pm2-startup install
-pm2 save
-```
-
-Servisleri görüntüle:
-```powershell
+# Durum kontrolü
 pm2 list
-pm2 logs
 ```
 
-### 11h. IIS ile Reverse Proxy (Opsiyonel)
+`pm2 list` çıktısında 3 servisin hepsi `online` görünmeli:
 
-IIS yerine **Caddy** çok daha kolaydır — Windows'ta tek binary, otomatik SSL:
+```
+┌─────┬──────────────┬─────────┬──────┬──────────┐
+│ id  │ name         │ status  │ cpu  │ mem      │
+├─────┼──────────────┼─────────┼──────┼──────────┤
+│ 0   │ mei-bot      │ online  │ 0%   │ 80mb     │
+│ 1   │ mei-api      │ online  │ 0%   │ 65mb     │
+│ 2   │ mei-client   │ online  │ 0%   │ 120mb    │
+└─────┴──────────────┴─────────┴──────┴──────────┘
+```
+
+**Log izlemek için:**
+```powershell
+pm2 logs           # tüm servisler
+pm2 logs mei-bot   # sadece bot
+pm2 logs mei-api   # sadece API
+pm2 logs mei-client
+```
+
+---
+
+### 11h. PM2 Startup — Sunucu Yeniden Başlayınca Otomatik Başlat
+
+```powershell
+pm2 save           # mevcut listeyi kaydet
+pm2-startup install
+```
+
+Bu komut bir Windows Scheduled Task oluşturur. Artık sunucu reboot'ta tüm servisler otomatik başlar.
+
+---
+
+### 11i. Windows Firewall — Port Aç
+
+```powershell
+# HTTP ve HTTPS portlarını dışarıya aç
+New-NetFirewallRule -DisplayName "Caddy HTTP"  -Direction Inbound -Protocol TCP -LocalPort 80  -Action Allow
+New-NetFirewallRule -DisplayName "Caddy HTTPS" -Direction Inbound -Protocol TCP -LocalPort 443 -Action Allow
+
+# 3000 ve 4000 portları dışarıya açık olmamalı — Caddy reverse proxy arkasında kalır
+# (Bu portları ayrıca açma)
+```
+
+---
+
+### 11j. Caddy — Reverse Proxy + Otomatik SSL
+
+Caddy tek binary, yapılandırması kolay ve Let's Encrypt SSL'i otomatik alır/yeniler.
 
 ```powershell
 winget install Caddyserver.Caddy
+
+# Caddy klasörü oluştur
+New-Item -Path "C:\caddy" -ItemType Directory -Force
+notepad C:\caddy\Caddyfile
 ```
 
-`C:\caddy\Caddyfile` oluştur:
+`Caddyfile` içeriği (`siteadin.com` → kendi domain adresinle değiştir):
 ```
 siteadin.com {
     reverse_proxy localhost:3000
@@ -549,27 +650,44 @@ api.siteadin.com {
 }
 ```
 
+Kaydet, ardından:
 ```powershell
-caddy run --config C:\caddy\Caddyfile
-# Servis olarak kaydet
+# Önce syntax kontrolü
+caddy validate --config C:\caddy\Caddyfile
+
+# Windows servisi olarak kaydet ve başlat
 caddy service install --config C:\caddy\Caddyfile
 caddy service start
 ```
 
-Caddy otomatik Let's Encrypt SSL sertifikası alır, yeniler ve HTTPS'e yönlendirir.
+Caddy başladıktan sonra:
+- `https://siteadin.com` → Next.js client (port 3000)
+- `https://api.siteadin.com` → Express API (port 4000)
+- HTTP → HTTPS yönlendirmesi otomatik
+- SSL sertifikası otomatik alınır ve yenilenir
 
-### 11i. Windows Firewall
+---
+
+### 11k. Son Kontroller
 
 ```powershell
-# HTTP ve HTTPS portlarını aç
-New-NetFirewallRule -DisplayName "HTTP"  -Direction Inbound -Protocol TCP -LocalPort 80  -Action Allow
-New-NetFirewallRule -DisplayName "HTTPS" -Direction Inbound -Protocol TCP -LocalPort 443 -Action Allow
+# Tüm servislerin çalıştığını doğrula
+pm2 list
 
-# Doğrudan erişimi kapat (reverse proxy arkasında olduğu için)
-# 3000 ve 4000 portları dışarıya açık olmamalı
+# API health check (tarayıcıda da açabilirsin)
+curl http://localhost:4000/health
+# {"status":"ok","timestamp":"..."} dönmeli
+
+# Tarayıcıda test et:
+# http://localhost:3000  → web sitesi görünmeli (Caddy olmadan direkt port)
+# https://siteadin.com   → Caddy üzerinden SSL ile
 ```
 
-### 11j. Güncelleme (Windows Server)
+Discord'da botun `/profile`, `/daily` gibi komutlarını test et — çalışıyorsa kurulum tamamdır.
+
+---
+
+### 11l. Güncelleme (Windows Server)
 
 ```powershell
 cd C:\mei
@@ -583,7 +701,7 @@ pm2 restart mei-bot
 cd C:\mei\MeiWeb\api; npm install
 pm2 restart mei-api
 
-# Client
+# Client (build almak gerekiyor)
 cd C:\mei\MeiWeb\client; npm install; npm run build
 pm2 restart mei-client
 ```
