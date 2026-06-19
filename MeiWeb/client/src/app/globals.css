@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-jakarta: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --mei-pink: #e8497a;
+  --mei-bg: #0e0e10;
+  --mei-surface: #18181b;
+  --mei-border: #2a2a2e;
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--mei-bg);
+  color: #e4e4e7;
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Custom Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #18181b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 #18181b;
+}
+
+/* ── Typography ──────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-jakarta);
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fafafa;
+}
+
+/* ── Utility Classes ─────────────────────────────────── */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #f472b6, #e8497a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Subtle surface card */
+  .surface {
+    background: #18181b;
+    border: 1px solid #27272a;
+  }
+
+  .surface-raised {
+    background: #1c1c1f;
+    border: 1px solid #2d2d31;
+  }
+
+  /* Pink accent glow — subtle, not overdone */
+  .glow-pink {
+    box-shadow: 0 0 0 1px rgba(232,73,122,0.2), 0 4px 16px rgba(232,73,122,0.12);
+  }
+
+  /* Shimmer skeleton */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      #27272a 0%,
+      #3f3f46 50%,
+      #27272a 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply bg-mei-500 hover:bg-mei-600 text-white font-semibold
+           px-5 py-2.5 rounded-lg transition-all duration-150
+           active:scale-95 text-sm;
+  }
+
+  .btn-secondary {
+    @apply bg-zinc-800 hover:bg-zinc-700 text-zinc-200
+           font-semibold px-5 py-2.5 rounded-lg transition-all
+           duration-150 active:scale-95 text-sm border border-zinc-700;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200
+           font-medium px-4 py-2 rounded-lg transition-all duration-150
+           active:scale-95 text-sm;
+  }
+
+  /* Input */
+  .input-base {
+    @apply bg-zinc-900 border border-zinc-700 text-zinc-200 rounded-lg
+           px-3 py-2 text-sm focus:outline-none focus:border-mei-500
+           focus:ring-1 focus:ring-mei-500/30 transition-colors w-full
+           placeholder-zinc-500;
+  }
+
+  /* Select */
+  .select-base {
+    @apply bg-zinc-900 border border-zinc-700 text-zinc-200 rounded-lg
+           px-3 py-2 text-sm focus:outline-none focus:border-mei-500
+           focus:ring-1 focus:ring-mei-500/30 transition-colors w-full
+           appearance-none cursor-pointer;
+  }
+}
+
+/* ── Animations ──────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes fadeIn {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  0%   { opacity: 0; transform: translateY(-6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in   { animation: fadeIn   0.25s ease-out; }
+.animate-slide-down { animation: slideDown 0.2s ease-out; }
+
+/* ── Radix UI overrides ──────────────────────────────── */
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
